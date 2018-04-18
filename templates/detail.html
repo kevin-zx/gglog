@@ -1,0 +1,49 @@
+<!--index.html-->
+
+<!--Embed the header.html template at this location-->
+{{ template "header.html" .}}
+
+
+
+<div class="container" id="webSiteDetail">
+
+	<details v-for="(rw,k) in wdDetail.recent_week_crawler_times">
+		<summary>
+			[[k]]蜘蛛最近一周的爬取次数
+		</summary>
+		<table class="table table-border">
+			<tr>
+				<th>时间</th>
+				<th>抓取次数</th>
+			</tr>
+			<tr v-for="d in rw">
+				<td>[[d.date]]</td>
+				<td>[[d.times]]</td>
+			</tr>
+		</table>
+	</details>
+	
+
+</div>
+<script type="text/javascript">
+
+var upload_app = new Vue({
+	el:"#webSiteDetail",
+	data:{
+		webSite:{{.webSite}},
+		wdDetail:{{.wdDetail}}
+
+	},
+	computed:{
+
+	},
+	methods:{},
+	delimiters:['[[',']]'],
+}
+);
+
+
+
+</script>
+<!--Embed the footer.html template at this location-->
+{{ template "footer.html" .}}

@@ -1,0 +1,78 @@
+<!--index.html-->
+
+<!--Embed the header.html template at this location-->
+{{ template "header.html" .}}
+
+
+
+<div class="container" id="upload_app">
+
+<div class="row">
+	<table class="table  table-bordered table-striped dataTable">
+		
+		<tr>
+			<th>日期</th>
+			<th>爬虫来的次数</th>
+		</tr>
+		<tr v-for="(spider in c_spider_data)">
+			<td>
+				[[spider['tl']]]
+			</td>
+			<td>
+				[[spider['c']]]
+			</td>
+		</tr>
+	</table>
+</div>
+
+
+</div>
+<script type="text/javascript">
+
+var spider_data = new Vue({
+	el:"#upload_app",
+	data:{
+		current_spider_type:"baidu",
+		spider_data:{},
+
+	},
+	computed:{
+		c_spider_day_data:function(){
+			
+		}
+	},
+	methods:{
+		request_data:function(){
+			$.ajax({
+                type:'POST',
+                url:"/spider_count_data",
+                data:{"domain": upload_app.domain},
+                datatype:"json",
+                success:function(result){
+                	if(result["status"] == "1"){
+						upload_app.domain_status = "上传文件中";
+                	}else if (result["status"] == "2") {
+                		upload_app.domain_status = "解析日志中";
+                	}else if (result["status"] == "3") {
+                		upload_app.domain_status = "解析完成";
+                		clearInterval(timer);
+                		upload_app.search('submit_search');
+                	}
+
+                    
+                },
+                error:function(x,error,e){
+                    console.log(x.responseText);
+                }
+            });
+		}
+	},
+	delimiters:['[[',']]'],
+}
+);
+
+
+
+</script>
+<!--Embed the footer.html template at this location-->
+{{ template "footer.html" .}}

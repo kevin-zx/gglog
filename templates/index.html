@@ -1,0 +1,155 @@
+<!--index.html-->
+
+<!--Embed the header.html template at this location-->
+{{ template "header.html" .}}
+
+
+
+<div class="container" id="upload_app">
+	<!-- <h2>直接查看库中存在的log数据</h2>
+	<div class="search row">
+		<input type="text" id="search_domain" v-model="search_domain">
+		<button @click="search('direct_search')">搜索</button>
+	</div> -->
+	<div class="web_site_list">
+		<h2>已经有记录的域名</h2>
+		<li v-for="web_site in web_sites">
+			<a :href="'/detail/'+web_site.ID">[[web_site.domain]]</a>
+		</li>
+	</div>
+	<hr>
+	<h2>上传新的数据</h2>
+	<div v-show="!submited">
+		<span class="text-danger">
+			[[warning]]
+		</span>
+		<div class="form-group">
+		    <label for="log_format">日志格式（默认：$remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent "$http_referer" "$http_user_agent"）</label>
+		    <input type="email" class="form-control" id="log_format" v-model="log_format" >
+		</div>
+		<div class="form-group">
+		    <label for="domain">网站主域</label>
+		    <input type="email" class="form-control" id="domain" v-model="domain" >
+		</div>
+
+		<div class="form-group">
+			 <label for="log_file">File input</label>
+			<input type="file"  class="form-control" name="log_file" id="log_file">
+			<button class="btn btn-default" @click="upload_file">提交</button>
+		</div>		
+	</div>
+	<div v-show="submited">
+		[[domain_status]],请耐心等待
+	</div>
+
+	<hr>
+	
+
+</div>
+<script type="text/javascript">
+
+var upload_app = new Vue({
+	el:"#upload_app",
+	data:{
+		log_format:'$remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent "$http_referer" "$http_user_agent"',
+		domain:"",
+		warning:"",
+		submited:false,
+		domain_status:"上传文件中",
+		search_domain:"",
+		web_sites:eval({{.webSites}}),
+
+	},
+	computed:{
+
+	},
+	methods:{
+		search:function(search_type){
+
+		},
+		comfirm_domain_status:function(){
+			
+			var timer = setInterval(function(){
+				$.ajax({
+	                type:'POST',
+	                url:"/websitestatus",
+
+	                data:{"domain": upload_app.domain},
+	                datatype:"json",
+	                success:function(result){
+	                	if(result["status"] == "1"){
+							upload_app.domain_status = "上传文件中";
+	                	}else if (result["status"] == "2") {
+	                		upload_app.domain_status = "解析日志中";
+	                	}else if (result["status"] == "3") {
+	                		upload_app.domain_status = "解析完成";
+	                		clearInterval(timer);
+	                		// upload_app.search('submit_search');
+	                		window.location = "/detail/"+result["id"];
+
+	                	}
+	                },
+	                error:function(x,error,e){
+	                    console.log(x.responseText);
+	                }
+	            });
+	
+			}, 1000);
+	        
+		},
+		upload_file:function(){
+			var formData = new FormData();
+			var name = $("#log_file").val();
+			formData.append("file",$("#log_file")[0].files[0]);
+			formData.append("name",name);
+			formData.append("domain",this.domain);
+			formData.append("log_format",this.log_format);
+
+			if(this.domain==""){
+				this.warning = "主域必须要填写";
+				return;
+			}
+
+			if(this.log_format == ""){
+				this.warning = "日志format必须填写或者使用默认值";
+				return;
+			}
+
+			$.ajax({
+				url : "/logupload", 
+				type : 'POST', 
+				data : formData, 
+				// 告诉jQuery不要去处理发送的数据
+				processData : false, 
+				// 告诉jQuery不要去设置Content-Type请求头
+				contentType : false,
+				beforeSend:function(){
+					console.log("正在进行，请稍候");
+				},
+				success : function(responseStr) { 
+					console.log(responseStr);
+					if(responseStr["status"] == 1){
+						upload_app.submited = true;
+
+						upload_app.comfirm_domain_status();
+					}else{
+						upload_app.submited = false;
+						alert("出现错误请联系管理员："+responseStr["error"]);
+					}
+				}, 
+				error : function(responseStr) { 
+					console.log("error");
+				} 
+			});
+
+		}
+	},
+	delimiters:['[[',']]'],
+}
+);
+
+
+
+</script>
+<!--Embed the footer.html template at this location-->
+{{ template "footer.html" .}}

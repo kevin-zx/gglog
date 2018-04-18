@@ -1,0 +1,59 @@
+<!--header.html-->
+
+<!doctype html>
+<html>
+
+<head>
+    <!--Use the `title` variable to set the title of the page-->
+    <title>{{ .title }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+<script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
+    <script src="/public/comm/js/jquery-3.3.1.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<style type="text/css">
+	.program_container{
+		/*background: gray;*/
+		background: #fff;
+		padding: 1rem;
+		margin-bottom: 1rem;
+		border-radius: .2rem;
+    	box-shadow: 0 1px 3px rgba(26,26,26,.1);	
+	}
+	body{
+		/*background: gray;*/
+		background: #f6f6f6;
+	}
+	.td_container{
+		background: #fff;
+		padding: .5rem;
+		border-radius: .2rem;
+    	box-shadow: 0 1px 3px rgba(26,26,26,.1);	
+	}
+	.container{
+		
+	}
+	li{
+		list-style-type: none;
+	}
+	.copy{
+		/*cursor: copy;*/
+		/*color: blue;*/
+	}
+	.s-header{
+		background: #fff;
+    padding: .5rem;
+    border-radius: .2rem;
+    box-shadow: 0 1px 3px rgba(26,26,26,.1);
+    margin-bottom: .5rem;
+    
+	}
+</style>
+</head>
+
+
+<body class="">
+<!--Embed the menu.html template at this location-->
+{{ template "menu.html" . }}
